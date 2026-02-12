@@ -7,9 +7,13 @@ export class Player {
     this.height = 190;
     this.x = 20;
     this.y = 100;
+    this.frameX = 0;
+    this.frameY = 0;
+    this.maxFrame = 37;
     this.speedY = 0;
     this.maxSpeed = 2;
     this.projectiles = [];
+    this.image = document.getElementById("player");
   }
 
   update()
@@ -20,12 +24,13 @@ export class Player {
     this.y += this.speedY;
 
     this.updateProjectileHandler();
+    this.animateSprite();
   }
 
   draw(context)
   {
-    context.fillStyle = "black";
-    context.fillRect(this.x, this.y, this.width, this.height);
+    // this.drawPlayerAsRectangle(context);
+    this.drawPlayerAsSprite(context)
 
     this.projectiles.forEach(projectile => {
       projectile.draw(context);
@@ -45,6 +50,34 @@ export class Player {
 /*
 private functions
 */
+  drawPlayerAsSprite(context)
+  {
+    if (this.game.debug) context.drawStroke(this.x, this.y.this.width, this.height);
+
+    context.drawImage(
+      this.image,
+      this.frameX * this.width, //sx
+      this.frameY * this.height, //sy
+      this.width, //sw
+      this.height, //sh
+      this.x,
+      this.y,
+      this.width,
+      this.height,
+    );
+  }
+  drawPlayerAsRectangle(context)
+  {
+    context.fillStyle = "black";
+    context.fillRect(this.x, this.y, this.width, this.height);
+  }
+  animateSprite()
+  {
+    if (this.frameX < this.maxFrame) this.frameX++;
+    else this.frameX = 0;
+    
+  }
+  
   updateProjectileHandler()
   {
     this.projectiles.forEach(projectile =>
