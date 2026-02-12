@@ -1,5 +1,5 @@
-import { UI, Player, InputHandler, Background, Angler1 } from "./index.js";
-
+import { UI, Player, InputHandler, Background, Anglers } from "./index.js";
+const {Angler1, Angler2, LuckyFish} = Anglers
 export class Game {
   constructor(width, height) {
     this.width = width;
@@ -20,7 +20,7 @@ export class Game {
     this.score = 0;
     this.winningScore = 10;
     this.gameTime = 0;
-    this.timeLimit = 5000;
+    this.timeLimit = 15000;
     this.speed = 1;
     this.debug = true;
   }
@@ -95,7 +95,13 @@ export class Game {
 
   addEnemy()
   {
-    this.enemies.push(new Angler1(this));
+    let enemy = {};
+    const randomize = Math.random();
+    if (randomize < 0.3) enemy = new Angler1(this);
+    else if (randomize < 0.6) enemy = new LuckyFish(this);
+    else enemy = new Angler2(this);
+
+    this.enemies.push(enemy);
   }
 
   checkCollision(rect1, rect2)
