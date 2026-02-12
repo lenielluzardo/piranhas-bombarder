@@ -17,6 +17,10 @@ export class InputHandler {
       if (( this.inputKeys.includes(e.key)) && keyIndex === -1) {
         this.game.keys.push(e.key);
       }
+      if (e.key === "d")
+      {
+        this.game.debug = !this.game.debug;
+      }
       else if (e.key === " ")
       {
         this.game.player.shootTop();

@@ -22,6 +22,7 @@ export class Game {
     this.gameTime = 0;
     this.timeLimit = 5000;
     this.speed = 1;
+    this.debug = true;
   }
   update(deltaTime) {
 

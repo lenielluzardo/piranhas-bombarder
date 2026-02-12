@@ -52,7 +52,7 @@ private functions
 */
   drawPlayerAsSprite(context)
   {
-    if (this.game.debug) context.drawStroke(this.x, this.y.this.width, this.height);
+    if (this.game.debug) context.strokeRect (this.x, this.y, this.width, this.height);
 
     context.drawImage(
       this.image,
