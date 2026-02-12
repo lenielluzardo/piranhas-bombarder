@@ -7,7 +7,7 @@ window.addEventListener("load", function () {
   canvas.height = 500;
 
   // game instatiation
-  const game = new Game(canvas.replaceWith, canvas.height);
+  const game = new Game(canvas.width, canvas.height);
   let lastTime = 0;
 
 

@@ -17,9 +17,19 @@ export class Game {
     this.ammoTimer = 0;
     this.ammoInterval = 500;
     this.gameOver = false;
+    this.score = 0;
+    this.winningScore = 10;
+    this.gameTime = 0;
+    this.timeLimit = 5000;
+    this.speed = 1;
   }
   update(deltaTime) {
+
+    this.checkGameTimeLimit(deltaTime);
+
     this.player.update();
+    this.background.update();
+    this.background.layer4.update();
 
     if (this.ammoTimer > this.ammoInterval)
     {
@@ -33,6 +43,30 @@ export class Game {
 
     this.enemies.forEach( enemy => {
       enemy.update();
+      if(this.checkCollision(this.player, enemy))
+      {
+        enemy.markedForDeletion = true;
+      }
+
+      // Checks collision with projectiles
+      this.player.projectiles.forEach(projectile => {
+        if (this.checkCollision(projectile, enemy))
+        {
+          enemy.lives--;
+          projectile.markedForDeletion = true;
+          
+          if (enemy.lives <= 0)
+          {
+            enemy.markedForDeletion = true;
+
+            // Increases score when enemy is killed.
+            if (!this.gameOver) this.score += enemy.score;
+
+            // Checks if player has won. By comparing scored points.
+            if (this.score >= this.winningScore) this.gameOver = true;
+          }
+        }
+      })
     });
 
     this.enemies = this.enemies.filter(enemy => !enemy.markedForDeletion)
@@ -49,16 +83,34 @@ export class Game {
   }
 
   draw(context) {
+    this.background.draw(context);
     this.player.draw(context);
-    // this.background.draw(context);
     this.ui.draw(context);
     this.enemies.forEach(enemy => {
       enemy.draw(context);
     });
+    this.background.layer4.draw(context);
   }
 
   addEnemy()
   {
     this.enemies.push(new Angler1(this));
+  }
+
+  checkCollision(rect1, rect2)
+  {
+    return (  
+      rect1.x < rect2.x + rect2.width &&
+      rect1.x + rect1.width > rect2.x &&
+      rect1.y < rect2.y + rect2.height &&
+      rect1.y + rect1.height > rect2.y
+    )
+  }
+
+  checkGameTimeLimit(deltaTime)
+  {
+    if (!this.gameOver) this.gameTime += deltaTime;
+    
+    if (this.gameTime > this.timeLimit) this.gameOver = true;
   }
 }

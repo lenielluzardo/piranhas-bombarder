@@ -1,18 +1,28 @@
+import {Layer} from "./index.js"
+
 export class Background
 {
   constructor(game)
   {
     this.game = game;
-  }
+    this.image1 = document.getElementById("layer1");
+    this.image2 = document.getElementById("layer2");
+    this.image3 = document.getElementById("layer3");
+    this.image4 = document.getElementById("layer4");
+    this.layer1 = new Layer(this.game, this.image1, 0.3);
+    this.layer2 = new Layer(this.game, this.image2, 0.4);
+    this.layer3 = new Layer(this.game, this.image3, 1);
+    this.layer4 = new Layer(this.game, this.image4, 1.5);
+    this.layers = [this.layer1, this.layer2, this.layer3];
+  } 
 
   update()
   {
-
+    this.layers.forEach(layer => layer.update());
   }
 
   draw(context)
   {
-    context.font = "30px Arial";
-    context.fillText(this.game.ammo, 15, 30);
+    this.layers.forEach(layer => layer.draw(context));
   }
 }
