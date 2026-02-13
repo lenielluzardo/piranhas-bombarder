@@ -10,6 +10,7 @@ class Angler1 extends Enemy {
     this.frameY = Math.floor(Math.random() * 3);
     this.lives = 2;
     this.score = this.lives;
+    this.type = "angler1";
   }
 }
 
@@ -20,9 +21,10 @@ class Angler2 extends Enemy {
     this.height = 165;
     this.y = Math.random() * (this.game.height * 0.9 - this.height);
     this.image = document.getElementById("angler2");
-    this.frameY = Math.floor(Math.random() * 3);
+    this.frameY = Math.floor(Math.random() * 2);
     this.lives = 3;
     this.score = this.lives;
+    this.type = "angler2"
   }
 }
 
@@ -33,9 +35,10 @@ class LuckyFish extends Enemy {
     this.height = 95;
     this.y = Math.random() * (this.game.height * 0.9 - this.height);
     this.image = document.getElementById("lucky");
-    this.frameY = Math.floor(Math.random() * 3);
+    this.frameY = Math.floor(Math.random() * 2);
     this.lives = 3;
     this.score = this.lives;
+    this.type = "lucky";
   }
 }
 export default { Angler1, Angler2, LuckyFish }

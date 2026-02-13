@@ -9,6 +9,7 @@ export class Projectile
     this.height = 3;
     this.speed = 3;
     this.markedForDeletion = false;
+    this.image = document.getElementById("projectile")
   }
 
   update()
@@ -20,7 +21,13 @@ export class Projectile
 
   draw(context)
   {
-    context.fillStyle = "green";
-    context.fillRect(this.x, this.y, this.width, this.height)
+    // context.fillStyle = "yellow";
+    // context.fillRect(this.x, this.y, this.width, this.height)
+
+    context.drawImage(
+      this.image,
+      this.x,
+      this.y
+    )
   }
 }

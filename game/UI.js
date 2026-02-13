@@ -5,7 +5,7 @@ export class UI
     this.game = game;
     this.fontSize = 25;
     this.fontFamily = "Helvetica";
-    this.color = "yellow";
+    this.color = "#fff";
   }
 
   draw(context)
@@ -18,10 +18,10 @@ export class UI
     context.shadowColor = "black";
     context.font = this.fontSize + "px" + this.fontFamily;
     
-    this.drawAmmo(context);
     this.drawScore(context);
     this.drawGameTimer(context);
     this.drawGameOver(context);
+    this.drawAmmo(context);
 
     context.restore();
   }
@@ -29,6 +29,7 @@ export class UI
   drawAmmo(context)
   {
     context.fillStyle = this.color;
+    if(this.game.player.powerUp) context.fillStyle = "#ffffbd";
     for (let i = 0; i < this.game.ammo; i++)
     {
       context.fillRect(20 + 5 * i, 50, 3, 20);

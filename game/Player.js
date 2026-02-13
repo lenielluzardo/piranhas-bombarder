@@ -14,10 +14,12 @@ export class Player {
     this.maxSpeed = 2;
     this.projectiles = [];
     this.image = document.getElementById("player");
+    this.powerUp = false;
+    this.powerUpTimer = 0;
+    this.powerUpLimit = 10000;
   }
 
-  update()
-  {
+  update(deltaTime) {
     if (this.game.keys.includes("ArrowUp")) this.speedY = -this.maxSpeed;
     else if (this.game.keys.includes("ArrowDown")) this.speedY = this.maxSpeed;
     else this.speedY = 0;
@@ -25,34 +27,66 @@ export class Player {
 
     this.updateProjectileHandler();
     this.animateSprite();
-  }
 
-  draw(context)
-  {
-    // this.drawPlayerAsRectangle(context);
-    this.drawPlayerAsSprite(context)
-
-    this.projectiles.forEach(projectile => {
-      projectile.draw(context);
-    })
-  }
-
-  shootTop()
-  {
-    if (this.game.ammo > 0)
-    {
-      this.projectiles.push(new Projectile(this.game, this.x + 80, this.y + 30))
-      this.game.ammo--;
-      console.log(this.projectiles);
+    //power up
+    if (this.powerUp) {
+      if (this.powerUpTimer > this.powerUpLimit) this.deactivatePowerUp();
+      else this.activatePowerUp(deltaTime);
     }
   }
 
-/*
+  draw(context) {
+    // this.drawPlayerAsRectangle(context);
+    
+    this.projectiles.forEach((projectile) => {
+      projectile.draw(context);
+    });
+    
+    this.drawPlayerAsSprite(context);
+    
+  }
+
+  /*
 private functions
 */
-  drawPlayerAsSprite(context)
-  {
-    if (this.game.debug) context.strokeRect (this.x, this.y, this.width, this.height);
+
+  shootTop() {
+    if (this.game.ammo > 0) {
+      this.projectiles.push(
+        new Projectile(this.game, this.x + 80, this.y + 30),
+      );
+      this.game.ammo--;
+
+      if (this.powerUp) this.shootBottom();
+    }
+  }
+
+  shootBottom() {
+    if(this.game.ammo > 0) {
+      this.projectiles.push(new Projectile(this.game, this.x + 80, this.y+ 175))
+    }
+  }
+
+  enterPowerUp() {
+    this.powerUpTimer = 0;
+    this.powerUp = true;
+    this.game.ammo = this.game.maxAmmo;
+  }
+  deactivatePowerUp() {
+    this.powerUpTimer = 0;
+    this.powerUp = false;
+    this.frameY = 0;
+  }
+
+  activatePowerUp(deltaTime) {
+    this.powerUpTimer += deltaTime;
+    this.frameY = 1;
+    this.game.ammo += 0.1;
+  }
+
+  drawPlayerAsSprite(context) {
+    if (this.game.debug)
+      context.strokeRect(this.x, this.y, this.width, this.height);
 
     context.drawImage(
       this.image,
@@ -66,25 +100,22 @@ private functions
       this.height,
     );
   }
-  drawPlayerAsRectangle(context)
-  {
+  drawPlayerAsRectangle(context) {
     context.fillStyle = "black";
     context.fillRect(this.x, this.y, this.width, this.height);
   }
-  animateSprite()
-  {
+  animateSprite() {
     if (this.frameX < this.maxFrame) this.frameX++;
     else this.frameX = 0;
-    
   }
-  
-  updateProjectileHandler()
-  {
-    this.projectiles.forEach(projectile =>
-    {
+
+  updateProjectileHandler() {
+    this.projectiles.forEach((projectile) => {
       projectile.update();
     });
 
-    this.projectiles = this.projectiles.filter(projectiles => !projectiles.markedForDeletion);
+    this.projectiles = this.projectiles.filter(
+      (projectiles) => !projectiles.markedForDeletion,
+    );
   }
 }
