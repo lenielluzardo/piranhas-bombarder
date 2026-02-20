@@ -3,7 +3,7 @@ import { Game } from "./game/Game.js"
 window.addEventListener("load", function () {
   const canvas = this.document.getElementById("canvas1");
   const ctx = canvas.getContext("2d");
-  canvas.width = 700;
+  canvas.width = 1000;
   canvas.height = 500;
 
   // game instatiation
@@ -19,8 +19,8 @@ window.addEventListener("load", function () {
     lastTime = timeStamp;
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.update(deltaTime);
     game.draw(ctx);
+    game.update(deltaTime);
 
     window.requestAnimationFrame(animate);
     
