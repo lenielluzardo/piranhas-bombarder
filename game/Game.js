@@ -1,5 +1,6 @@
-import { UI, Player, InputHandler, Background, Anglers, Particle } from "./index.js";
-const { Angler1, Angler2, LuckyFish } = Anglers;
+import { UI, Player, InputHandler, Background, Enemy, Particle, Effects } from "./index.js";
+const { Angler1, Angler2, LuckyFish, HiveWhale, Drone, BulbWhale, MoonFish } = Enemy;
+const { SmokeExplosion, FireExplosion } = Effects;
 export class Game {
   constructor(width, height) {
     this.width = width;
@@ -11,6 +12,7 @@ export class Game {
     this.keys = [];
     this.enemies = [];
     this.particles = [];
+    this.explosions = [];
     this.enemyTimer = 0;
     this.enemyInterval = 1000;
     this.ammo = 20;
@@ -23,7 +25,7 @@ export class Game {
     this.gameTime = 0;
     this.timeLimit = 99000;
     this.speed = 1;
-    this.debug = true;
+    this.debug = false;
   }
 
   update(deltaTime) {
@@ -44,20 +46,26 @@ export class Game {
     this.particles.forEach(particle => particle.update());
     this.particles = this.particles.filter(particle => !particle.markedForDeletion)
 
+    //Explosions
+    this.explosions.forEach(explosion => explosion.update(deltaTime));
+    this.explosions = this.explosions.filter(explosion => !explosion.markedForDeletion)
+
     this.enemies.forEach((enemy) => {
       enemy.update();
       if (this.checkCollision(this.player, enemy)) {
         enemy.markedForDeletion = true;
 
+        this.addExplosion(enemy);
+
         // Show 10 particles when enemy is destroyed.
-        for (let i = 0; i < 10; i++){
+        for (let i = 0; i < enemy.lives; i++){
             this.particles.push(new Particle(this,
                                             enemy.x + enemy.width * 0.5,
                                             enemy.y + enemy.height * 0.5))
         }
 
-        if (enemy.type == "lucky") this.player.enterPowerUp();
-        else this.score--;
+        if (enemy.type === "lucky") this.player.enterPowerUp();
+        else if (!this.gameOver) this.score--;
       }
 
       // Checks collision with projectiles
@@ -67,19 +75,13 @@ export class Game {
           projectile.markedForDeletion = true;
 
           // Show one particle only when enemy get hit by projectile
-            this.particles.push(new Particle(this,
+          this.particles.push(new Particle(this,
                                             enemy.x + enemy.width * 0.5,
                                             enemy.y + enemy.height * 0.5))
-
-          if (enemy.lives <= 0) {
-            enemy.markedForDeletion = true;
-
-            // Increases score when enemy is killed.
-            if (!this.gameOver) this.score += enemy.score;
-
-            // Checks if player has won. By comparing scored points.
-            if (this.score >= this.winningScore) this.gameOver = true;
-          }
+             
+          
+          if (enemy.lives <= 0) this.destroyEnemy(enemy);
+            
         }
       });
     });
@@ -96,13 +98,17 @@ export class Game {
 
   draw(context) {
     this.background.draw(context);
-    this.player.draw(context);
     this.ui.draw(context);
+    this.player.draw(context);
 
     this.particles.forEach(particle => particle.draw(context));
 
     this.enemies.forEach((enemy) => {
       enemy.draw(context);
+    });
+
+    this.explosions.forEach((explosion) => {
+      explosion.draw(context);
     });
     this.background.layer4.draw(context);
   }
@@ -112,9 +118,55 @@ export class Game {
     const randomize = Math.random();
     if (randomize < 0.3) enemy = new Angler1(this);
     else if (randomize < 0.6) enemy = new Angler2(this);
+    else if (randomize < 0.7) enemy = new HiveWhale(this);
+    else if (randomize < 0.8) enemy = new BulbWhale(this);
+    else if (randomize < 0.9) enemy = new MoonFish(this);
     else enemy = new LuckyFish(this);
 
     this.enemies.push(enemy);
+  }
+
+  addExplosion(enemy) {
+    const randomize = Math.random();
+    if (randomize < 0.5 ) {
+      this.explosions.push(
+        new SmokeExplosion(this,
+          enemy.x + enemy.width * 0.5,
+          enemy.y + enemy.height * 0.5));
+    }
+    else {
+      this.explosions.push(
+        new FireExplosion(
+          this,
+          enemy.x + enemy.width * 0.5,
+          enemy.y + enemy.height * 0.5,
+        ),
+      );
+    }
+  }
+
+  destroyEnemy(enemy)
+  {
+    enemy.markedForDeletion = true;
+
+    this.addExplosion(enemy);
+
+    if (enemy.type === "moon") this.player.enterPowerUp();
+
+    if (enemy.type === "hive") {
+      for (let i = 0; i < 5; i++)
+      {
+        this.enemies.push(new Drone(this,
+          enemy.x + Math.random() * enemy.width,
+          enemy.y + Math.random() * enemy.height * 0.5));
+      }
+    }
+
+    // Increases score when enemy is killed.
+    if (!this.gameOver) this.score += enemy.score;
+
+    // Checks if player has won. By comparing scored points.
+    // if (this.score >= this.winningScore) this.gameOver = true;
   }
 
   checkCollision(rect1, rect2) {
