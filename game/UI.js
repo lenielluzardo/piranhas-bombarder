@@ -3,8 +3,8 @@ export class UI
   constructor(game)
   {
     this.game = game;
-    this.fontSize = 25;
-    this.fontFamily = "Helvetica";
+    this.fontSize = 20;
+    this.fontFamily = 'Bangers';
     this.color = "#fff";
   }
 
@@ -16,7 +16,7 @@ export class UI
     context.shadowOffsetX = 2;
     context.shadowOffsetY = 2;
     context.shadowColor = "black";
-    context.font = this.fontSize + "px" + this.fontFamily;
+    context.font = this.fontSize + "px " + this.fontFamily;
     
     this.drawScore(context);
     this.drawGameTimer(context);
@@ -61,10 +61,10 @@ export class UI
         message2 = "Try again!";
       }
 
-      context.font = "50px " + this.fontFamily;
+      context.font = "70px " + this.fontFamily;
       context.fillText(message1, this.game.width * 0.5, this.game.height * 0.5 - 40);
-      context.font = "25px " + this.fontFamily;
-      context.fillText(message2, this.game.width * 0.5, this.game.height * 0.5 + 40);
+      context.font = "50px " + this.fontFamily;
+      context.fillText(message2, this.game.width * 0.5, this.game.height * 0.5 + 20);
     }
   }
   

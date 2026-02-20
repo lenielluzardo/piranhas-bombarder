@@ -25,6 +25,8 @@ export class Player {
     else this.speedY = 0;
     this.y += this.speedY;
 
+    this.verticalBoundariesHandler();
+
     this.updateProjectileHandler();
     this.animateSprite();
 
@@ -117,5 +119,18 @@ private functions
     this.projectiles = this.projectiles.filter(
       (projectiles) => !projectiles.markedForDeletion,
     );
+  }
+
+  verticalBoundariesHandler() {
+    //bottom boundary
+    if (this.y > this.game.height - this.height * 0.5) {
+      this.y = this.game.height - this.height * 0.5
+    }
+
+    //bottom boundary
+    if (this.y < -this.height * 0.5) {
+      this.y = -this.height * 0.5;
+    }
+
   }
 }
