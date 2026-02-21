@@ -8,5 +8,6 @@ import { InputHandler } from "./InputHandler.js";
 import Enemy from "./Enemy.js";
 import { Game } from "./Game.js";
 import Effects from "./Effects.js";
+import SoundController from "./SoundController.js";
 
-export {Player, Particle, Projectile, Background, UI, Layer, InputHandler, Enemy, Game, Effects}
+export {Player, Particle, Projectile, Background, UI, Layer, InputHandler, Enemy, Game, Effects, SoundController}

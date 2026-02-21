@@ -27,7 +27,7 @@ export class Player {
 
     this.verticalBoundariesHandler();
 
-    this.updateProjectileHandler();
+    this.updateProjectileHandler(deltaTime);
     this.animateSprite();
 
     //power up
@@ -59,6 +59,8 @@ private functions
       );
       this.game.ammo--;
 
+      this.game.sound.shot();
+
       if (this.powerUp) this.shootBottom();
     }
   }
@@ -74,11 +76,13 @@ private functions
     this.powerUp = true;
 
     if (this.game.ammo < this.game.maxAmmo) this.game.ammo = this.game.maxAmmo;
+    this.game.sound.powerUp();
   }
   deactivatePowerUp() {
     this.powerUpTimer = 0;
     this.powerUp = false;
     this.frameY = 0;
+    this.game.sound.powerDown();
   }
 
   activatePowerUp(deltaTime) {
@@ -112,9 +116,9 @@ private functions
     else this.frameX = 0;
   }
 
-  updateProjectileHandler() {
+  updateProjectileHandler(deltaTime) {
     this.projectiles.forEach((projectile) => {
-      projectile.update();
+      projectile.update(deltaTime);
     });
 
     this.projectiles = this.projectiles.filter(

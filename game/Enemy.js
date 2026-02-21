@@ -143,7 +143,7 @@ class MoonFish extends Enemy {
     this.x = x;
     this.y = y;
     this.image = document.getElementById("moonfish");
-    this.frameY = Math.floor(Math.random() * 2);
+    this.frameY = 0;
     this.lives = 10;
     this.score = this.lives;
     this.type = "moon";

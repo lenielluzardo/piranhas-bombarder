@@ -1,6 +1,6 @@
-import { UI, Player, InputHandler, Background, Enemy, Particle, Effects } from "./index.js";
+import { UI, Player, InputHandler, Background, Enemy, Particle, Effects, SoundController } from "./index.js";
 const { Angler1, Angler2, LuckyFish, HiveWhale, Drone, BulbWhale, MoonFish } = Enemy;
-const { SmokeExplosion, FireExplosion } = Effects;
+const { SmokeExplosion, FireExplosion, Shield} = Effects;
 export class Game {
   constructor(width, height) {
     this.width = width;
@@ -9,6 +9,8 @@ export class Game {
     this.background = new Background(this);
     this.inputHandler = new InputHandler(this);
     this.ui = new UI(this);
+    this.sound = new SoundController();
+    this.shield = new Shield(this);
     this.keys = [];
     this.enemies = [];
     this.particles = [];
@@ -42,6 +44,8 @@ export class Game {
       this.ammoTimer += deltaTime;
     }
 
+    this.shield.update(deltaTime);
+
     //Particles
     this.particles.forEach(particle => particle.update());
     this.particles = this.particles.filter(particle => !particle.markedForDeletion)
@@ -56,6 +60,9 @@ export class Game {
         enemy.markedForDeletion = true;
 
         this.addExplosion(enemy);
+        this.sound.hit();
+        this.shield.reset();
+        this.sound.shield();
 
         // Show 10 particles when enemy is destroyed.
         for (let i = 0; i < enemy.lives; i++){
@@ -78,7 +85,6 @@ export class Game {
           this.particles.push(new Particle(this,
                                             enemy.x + enemy.width * 0.5,
                                             enemy.y + enemy.height * 0.5))
-             
           
           if (enemy.lives <= 0) this.destroyEnemy(enemy);
             
@@ -100,7 +106,7 @@ export class Game {
     this.background.draw(context);
     this.ui.draw(context);
     this.player.draw(context);
-
+    this.shield.draw(context);
     this.particles.forEach(particle => particle.draw(context));
 
     this.enemies.forEach((enemy) => {
@@ -150,6 +156,7 @@ export class Game {
     enemy.markedForDeletion = true;
 
     this.addExplosion(enemy);
+    this.sound.explosion();
 
     if (enemy.type === "moon") this.player.enterPowerUp();
 
